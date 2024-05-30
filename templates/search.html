@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            width: 100%; /* Set width to 100% of viewport width */
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            height: 20px;
+            padding: 3px 10px;
+            font-size: 16px;
+            border: 2px solid orange;
+            border-radius: 15px;
+            outline: none;
+        }
+
+        button {
+            margin-left: 10px;
+            font-size: 16px;
+            background-color: orange;
+            color: white;
+            border-radius: 15px;
+            outline: none;
+            padding: 5px 10px; /* Adjust padding to make button smaller */
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            white-space: normal; /* Break lines as necessary to fill line boxes */
+            overflow-wrap: break-word; /* Break the word at the end of the line */
+            word-break: break-all; /* Specify line breaking rules */
+        }
+
+        img {
+            width: 33%;
+        }
+
+        .loader {
+            display: none;
+            border: 12px solid #f3f3f3; /* Light grey */
+            border-top: 12px solid orange; /* Make the loader orange */
+            border-radius: 50%;
+            width: 80px; /* Make the loader smaller */
+            height: 80px; /* Make the loader smaller */
+            animation: spin 2s linear infinite;
+            margin-top: 20px; /* Add space between the loading circle and the search bar */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+            document.querySelectorAll('.result').forEach(result => result.style.display = 'none'); // Hide results
+        }
+
+        window.onload = function () {
+            document.getElementById('loader').style.display = 'none';
+            document.querySelectorAll('.result').forEach(result => result.style.display = 'block'); // Show results
+        }
+    </script>
+</head>
+<body>
+<img src="{% static 'logo.png' %}" alt="Logo">
+<form method="POST" action="{% url 'search' %}" onsubmit="showLoader()">
+    {% csrf_token %}
+    <div>
+        <input type="text" name="query" placeholder="Enter your search" value="{{ query }}">
+        <button type="submit">Search</button>
+    </div>
+</form>
+<div id="loader" class="loader"></div> <!-- Loading circle -->
+{% for result in results %}
+    <div class="result">
+        <h2>{{ result.title }}</h2>
+        <p>{{ result.passage }}</p>
+    </div>
+{% endfor %}
+</body>
+</html>
