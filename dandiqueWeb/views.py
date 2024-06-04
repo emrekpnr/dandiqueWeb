@@ -22,6 +22,10 @@ def search(request):
                     'passage': ''.join(random.choices(string.ascii_uppercase + string.digits, k=616))} for _ in
                    range(10)]
 
+        # If 'lucky' is true, only return one result
+        if 'lucky' in request.POST:
+            results = [results[0]]
+
         return render(request, 'search.html', {'results': results, 'query': search_text})
 
     return render(request, 'search.html')
