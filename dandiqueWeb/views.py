@@ -3,7 +3,7 @@ import string
 import time
 
 from django.shortcuts import render
-
+from .demo import search_query
 
 def search(request):
     search_text = ''
@@ -17,10 +17,13 @@ def search(request):
         # Simulate a delay
         time.sleep(1)
 
+        # Get search result
+        results = search_query(search_text)
+
         # Generate random search results
-        results = [{'title': ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)),
-                    'passage': ''.join(random.choices(string.ascii_uppercase + string.digits, k=616))} for _ in
-                   range(10)]
+        # results = [{'title': ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)),
+        #             'passage': ''.join(random.choices(string.ascii_uppercase + string.digits, k=616))} for _ in
+        #            range(10)]
 
         # If 'lucky' is true, only return one result
         if 'lucky' in request.POST:

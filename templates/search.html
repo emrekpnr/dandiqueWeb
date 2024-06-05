@@ -41,16 +41,22 @@
             padding: 5px 10px; /* Adjust padding to make button smaller */
         }
 
+        img {
+            width: 44%;
+        }
+
         .result {
+            width: 100%; /* Set width to 100% of the parent container */
             margin-top: 20px;
             text-align: center;
             white-space: normal; /* Break lines as necessary to fill line boxes */
             overflow-wrap: break-word; /* Break the word at the end of the line */
-            word-break: break-all; /* Specify line breaking rules */
+            word-break: normal; /* Specify line breaking rules */
+            border: 2px solid orange;
         }
 
-        img {
-            width: 44%;
+        .score {
+            margin-left: auto;
         }
 
         .loader {
@@ -132,9 +138,16 @@
 </div>
 {% for result in results %}
     <div class="result card mb-3">
-        <div class="card-body">
-            <h2 class="card-title">{{ result.title }}</h2>
-            <p class="card-text">{{ result.passage }}</p>
+        <div class="card-body row">
+            <div class="col-md-4">
+                <h2 class="card-title">{{ result.title }}</h2>
+            </div>
+            <div class="col-md-4">
+                <p class="card-text">{{ result.answer }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="score">Similarity Score: {{ result.score|floatformat:2 }}</p>
+            </div>
         </div>
     </div>
 {% endfor %}
