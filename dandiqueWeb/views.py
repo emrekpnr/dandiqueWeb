@@ -1,9 +1,11 @@
-import random
-import string
 import time
 
 from django.shortcuts import render
-from .demo import search_query
+from .demo import load_data, search_query, relevance_feedback
+
+# Load data
+embedder, doc_embeds, doc_texts = load_data()
+
 
 def search(request):
     search_text = ''
@@ -15,19 +17,23 @@ def search(request):
             return render(request, 'search.html')
 
         # Simulate a delay
-        time.sleep(1)
+        time.sleep(0.5)
 
         # Get search result
-        results = search_query(search_text)
+        results = search_query(search_text, embedder, doc_embeds, doc_texts)
+        if results == []:
+            return render(request, 'search.html', {'results': [{'title': '', 'answer': 'No results found'}], 'query': search_text})
 
-        # Generate random search results
-        # results = [{'title': ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)),
-        #             'passage': ''.join(random.choices(string.ascii_uppercase + string.digits, k=616))} for _ in
-        #            range(10)]
+        # search again with the most relevant document (Relevance Feedback)
+        RF = 1  # Number of most relevant documents to use for relevance feedback
+        most_relevant_docs = [result["answer"] for result in results[:RF]]
+        results = relevance_feedback(search_text, most_relevant_docs, embedder, doc_embeds, doc_texts)
+        if results == []:
+            return render(request, 'search.html', {'results': [{'title': '', 'answer': 'No results found'}], 'query': search_text})
 
-        # If 'lucky' is true, only return one result
+        # If 'lucky' is true, only return one result without any threshold
         if 'lucky' in request.POST:
-            results = [results[0]]
+            results = search_query(search_text, embedder, doc_embeds, doc_texts, threshold=0.0)
 
         return render(request, 'search.html', {'results': results, 'query': search_text})
 
