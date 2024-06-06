@@ -33,7 +33,7 @@ def search(request):
 
         # If 'lucky' is true, only return one result without any threshold
         if 'lucky' in request.POST:
-            results = search_query(search_text, embedder, doc_embeds, doc_texts, threshold=0.0)
+            results = search_query(search_text, embedder, doc_embeds, doc_texts, threshold=0.0)[0]
 
         return render(request, 'search.html', {'results': results, 'query': search_text})
 
