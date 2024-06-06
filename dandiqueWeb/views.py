@@ -19,6 +19,11 @@ def search(request):
         # Simulate a delay
         time.sleep(0.5)
 
+        # If 'lucky' is true, only return one result without any threshold
+        if 'lucky' in request.POST:
+            results = search_query(search_text, embedder, doc_embeds, doc_texts, threshold=0.0)[0]
+            return render(request, 'search.html', {'results': [results], 'query': search_text})
+
         # Get search result
         results = search_query(search_text, embedder, doc_embeds, doc_texts)
         if results == []:
@@ -30,10 +35,6 @@ def search(request):
         results = relevance_feedback(search_text, most_relevant_docs, embedder, doc_embeds, doc_texts)
         if results == []:
             return render(request, 'search.html', {'results': [{'title': '', 'answer': 'No results found'}], 'query': search_text})
-
-        # If 'lucky' is true, only return one result without any threshold
-        if 'lucky' in request.POST:
-            results = search_query(search_text, embedder, doc_embeds, doc_texts, threshold=0.0)[0]
 
         return render(request, 'search.html', {'results': results, 'query': search_text})
 
